@@ -20,7 +20,9 @@ export default function ReportFoundPage() {
                 <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                   Lost & Found
                 </h1>
-                <p className="text-xs text-muted-foreground">Report Found Item</p>
+                <p className="text-xs text-muted-foreground">
+                  Report Found Item
+                </p>
               </div>
             </div>
           </div>
@@ -34,8 +36,9 @@ export default function ReportFoundPage() {
               Report a Found Item
             </CardTitle>
             <p className="text-gray-600">
-              This page is under construction. We're building a comprehensive form 
-              to help you report found items and reunite them with their owners.
+              This page is under construction. We're building a comprehensive
+              form to help you report found items and reunite them with their
+              owners.
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -45,21 +48,25 @@ export default function ReportFoundPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Item Name
                 </label>
-                <Input placeholder="e.g., Blue Water Bottle" disabled className="rounded-xl" />
+                <Input
+                  placeholder="e.g., Blue Water Bottle"
+                  disabled
+                  className="rounded-xl"
+                />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Description
                 </label>
-                <Textarea 
+                <Textarea
                   placeholder="Provide detailed description of the found item..."
-                  disabled 
+                  disabled
                   className="rounded-xl"
                   rows={4}
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -67,10 +74,14 @@ export default function ReportFoundPage() {
                   </label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input placeholder="Student Union" disabled className="pl-10 rounded-xl" />
+                    <Input
+                      placeholder="Student Union"
+                      disabled
+                      className="pl-10 rounded-xl"
+                    />
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Date Found
@@ -81,33 +92,45 @@ export default function ReportFoundPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Upload Photos
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
                   <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">Photo upload functionality coming soon</p>
+                  <p className="text-sm text-gray-500">
+                    Photo upload functionality coming soon
+                  </p>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Current Location of Item
                 </label>
-                <Input placeholder="Where is the item being held?" disabled className="rounded-xl" />
+                <Input
+                  placeholder="Where is the item being held?"
+                  disabled
+                  className="rounded-xl"
+                />
               </div>
-              
-              <Button className="w-full bg-green-600 hover:bg-green-700 rounded-xl py-3" disabled>
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Submit Found Item Report
+
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700 rounded-xl py-3"
+                disabled
+              >
+                <span className="flex items-center justify-center">
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Submit Found Item Report
+                </span>
               </Button>
             </div>
 
             <div className="text-center py-4 border-t">
               <p className="text-gray-500 mb-4">
-                Want this page completed? Continue prompting to have it built out with full reporting functionality!
+                Want this page completed? Continue prompting to have it built
+                out with full reporting functionality!
               </p>
               <Button asChild variant="outline">
                 <Link to="/">Return to Homepage</Link>

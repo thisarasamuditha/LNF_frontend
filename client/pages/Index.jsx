@@ -183,7 +183,49 @@ export default function Index() {
               lost belongings. Join thousands of students and staff in our lost
               & found network.
             </p>
-            {/* ...rest of hero section... */}
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto mb-8">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  type="text"
+                  placeholder="Search for lost items (e.g., iPhone, wallet, keys...)"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 pr-32 py-4 text-lg rounded-2xl border-2 border-blue-100 focus:border-blue-500 shadow-lg"
+                />
+                <Button
+                  size="lg"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-xl"
+                >
+                  Search
+                </Button>
+              </div>
+            </div>
+
+            {/* Quick Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button
+                asChild
+                size="lg"
+                className="border-red-600 text-red-600 hover:bg-red-50 rounded-xl px-8"
+              >
+                <Link to="/report-lost">
+                  <Tag className="w-5 h-5 mr-2" />
+                  Report Lost Item
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                className="border-green-600 text-green-600 hover:bg-green-50 rounded-xl px-8"
+              >
+                <Link to="/report-found">
+                  <Camera className="w-5 h-5 mr-2" />
+                  Report Found Item
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
