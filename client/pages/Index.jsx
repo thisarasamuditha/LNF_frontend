@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../App";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Search,
   MapPin,
@@ -26,6 +27,39 @@ import { Badge } from "@/components/ui/badge";
 export default function Index() {
   const [searchQuery, setSearchQuery] = useState("");
   const { isAuthenticated, logout } = useAuth();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  // Handle search submission
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  // Fetch all items from the API
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("http://localhost:8088/api/items");
+        setItems(response.data);
+        setError("");
+      } catch (err) {
+        console.error("Error fetching items:", err);
+        setError("Failed to load items. Please try again later.");
+        // Fallback to static data if API fails
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
 
   const recentItems = [
     {
@@ -44,7 +78,7 @@ export default function Index() {
       time: "4 hours ago",
       type: "found",
       image: "/placeholder.svg",
-      category: "Personal Items",
+      category: "Accessories",
     },
     {
       id: 3,
@@ -92,10 +126,23 @@ export default function Index() {
     },
   ];
 
+  // Calculate stats from items data
   const stats = [
-    { number: "2,847", label: "Items Reunited", color: "text-green-600" },
-    { number: "156", label: "Active Users", color: "text-blue-600" },
-    { number: "98%", label: "Success Rate", color: "text-purple-600" },
+    { 
+      number: items.length.toString(), 
+      label: "Total Items", 
+      color: "text-blue-600" 
+    },
+    { 
+      number: items.filter(item => item.type === "FOUND").length.toString(), 
+      label: "Found Items", 
+      color: "text-green-600" 
+    },
+    { 
+      number: items.filter(item => item.type === "LOST").length.toString(), 
+      label: "Lost Items", 
+      color: "text-red-600" 
+    },
   ];
 
   return (
@@ -136,29 +183,25 @@ export default function Index() {
               >
                 Report Found
               </Link>
-              <a
-                href="#"
+              <Link
+                to="/my-items"
                 className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
               >
                 My Items
-              </a>
+              </Link>
             </nav>
             <div className="flex items-center space-x-3">
               {isAuthenticated ? (
-                <Button variant="outline" size="sm" onClick={logout}>
+                <Button size="sm" onClick={logout}>
                   Logout
                 </Button>
               ) : (
                 <>
                   <Link to="/signin">
-                    <Button variant="outline" size="sm">
-                      Sign In
-                    </Button>
+                    <Button size="sm">Sign In</Button>
                   </Link>
                   <Link to="/signup">
-                    <Button variant="outline" size="sm">
-                      Sign Up
-                    </Button>
+                    <Button size="sm">Sign Up</Button>
                   </Link>
                 </>
               )}
@@ -175,7 +218,7 @@ export default function Index() {
               Lost Something?
               <br />
               <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                We'll Help You Find It
+                We'll Help You To Find It
               </span>
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -184,7 +227,7 @@ export default function Index() {
               & found network.
             </p>
             {/* Search Bar */}
-            <div className="max-w-2xl mx-auto mb-8">
+            <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-8">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
@@ -195,13 +238,15 @@ export default function Index() {
                   className="pl-12 pr-32 py-4 text-lg rounded-2xl border-2 border-blue-100 focus:border-blue-500 shadow-lg"
                 />
                 <Button
+                  type="submit"
                   size="lg"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-xl"
+                  disabled={!searchQuery.trim()}
                 >
                   Search
                 </Button>
               </div>
-            </div>
+            </form>
 
             {/* Quick Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -259,55 +304,90 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {recentItems.map((item) => (
-              <Card
-                key={item.id}
-                className="hover:shadow-lg transition-shadow duration-300 rounded-2xl overflow-hidden"
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading items...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-600 mb-4">{error}</p>
+              <Button 
+                onClick={() => window.location.reload()} 
+                variant="outline"
+                className="rounded-xl"
               >
-                <div className="relative">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <Badge
-                    className={`absolute top-3 right-3 ${
-                      item.type === "lost"
-                        ? "bg-red-100 text-red-700 hover:bg-red-200"
-                        : "bg-green-100 text-green-700 hover:bg-green-200"
-                    }`}
-                  >
-                    {item.type.toUpperCase()}
-                  </Badge>
-                </div>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">{item.title}</CardTitle>
-                  <CardDescription className="text-sm">
-                    <div className="flex items-center text-gray-500 mb-1">
-                      <MapPin className="w-4 h-4 mr-1" />
-                      {item.location}
+                Try Again
+              </Button>
+            </div>
+          ) : items.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 mb-4">No items found.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+              {items.slice(0, 10).map((item) => (
+                <Link to={`/items/${item.id}`} key={item.id}>
+                  <Card className="hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden hover:scale-[1.02] group cursor-pointer">
+                    <div className="relative">
+                      <img
+                        src={item.imageUrl || "/placeholder.svg"}
+                        alt={item.title}
+                        className="w-full h-48 object-cover group-hover:brightness-105 transition-all"
+                        onError={(e) => {
+                          e.target.src = "/placeholder.svg";
+                        }}
+                      />
+                      <Badge
+                        className={`absolute top-3 right-3 ${
+                          item.type === "LOST"
+                            ? "bg-red-100 text-red-700 group-hover:bg-red-200"
+                            : "bg-green-100 text-green-700 group-hover:bg-green-200"
+                        }`}
+                      >
+                        {item.type}
+                      </Badge>
                     </div>
-                    <div className="flex items-center text-gray-500">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {item.time}
-                    </div>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <Badge variant="outline" className="text-xs">
-                    {item.category}
-                  </Badge>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                        {item.title}
+                      </CardTitle>
+                      <CardDescription className="text-sm">
+                        <div className="flex items-center text-gray-500 mb-1">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {item.location}
+                        </div>
+                        <div className="flex items-center text-gray-500">
+                          <Clock className="w-4 h-4 mr-1" />
+                          {new Date(item.date).toLocaleDateString()}
+                        </div>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0 flex items-center justify-between">
+                      <Badge variant="outline" className="text-xs">
+                        {item.category}
+                      </Badge>
+                      <span className="text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+                        View Details
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </span>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
 
           <div className="text-center mt-8">
-            <Button asChild variant="outline" size="lg" className="rounded-xl">
-              <Link to="/search">
+            <Button
+              asChild
+              size="lg"
+              className="rounded-full bg-gradient-to-r from-blue-500 to-green-500 text-white hover:opacity-90 px-6"
+            >
+              <Link to="/search" className="flex items-center">
+                <Search className="w-6 h-10 mr-2" />
                 View All Items
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>
           </div>
