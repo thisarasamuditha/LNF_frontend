@@ -2,9 +2,10 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../App";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,9 +28,13 @@ export default function SignIn() {
       });
 
       const data = await response.json();
-      alert(data.message);
       if (response.ok) {
         setIsAuthenticated(true);
+        alert(data.message || "Login successful!");
+        navigate("/"); // Redirect to home page
+      } else {
+        setIsAuthenticated(false);
+        alert(data.message || "Login failed! Invalid credentials.");
       }
     } catch (error) {
       alert("Login failed!");
