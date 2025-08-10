@@ -9,9 +9,12 @@ import Index from "./pages/Index";
 import Search from "./pages/Search";
 import ReportLost from "./pages/ReportLost";
 import ReportFound from "./pages/ReportFound";
+import ItemDetail from "./pages/ItemDetail";
+import MyItems from "./pages/MyItems";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import RequireAuth from "./pages/RequireAuth";
 // Simple Auth Context for demo
 export const AuthContext = createContext();
 export function useAuth() {
@@ -44,8 +47,31 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/report-lost" element={<ReportLost />} />
-            <Route path="/report-found" element={<ReportFound />} />
+            <Route path="/items/:id" element={<ItemDetail />} />
+            <Route
+              path="/my-items"
+              element={
+                <RequireAuth>
+                  <MyItems />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/report-lost"
+              element={
+                <RequireAuth>
+                  <ReportLost />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/report-found"
+              element={
+                <RequireAuth>
+                  <ReportFound />
+                </RequireAuth>
+              }
+            />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
