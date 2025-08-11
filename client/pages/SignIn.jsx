@@ -28,8 +28,24 @@ export default function SignIn() {
       });
 
       const data = await response.json();
-      if (response.ok) {
+      if (response.ok && data.message === "Login successful!") {
+        // Store user data in localStorage
+        const userData = {
+          id: data.user?.id || data.id,
+          username: data.user?.username || data.username || username,
+          email: data.user?.email || data.email
+        };
+
+        // Save user data to localStorage
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        console.log("User id:", userData.id); 
+        console.log("User name:", userData.username);  // This will log the user ID (19 in this case)
+        console.log("User email:", userData.email);         
+        // Set authentication status
         setIsAuthenticated(true);
+
+
         alert(data.message || "Login successful!");
         navigate("/"); // Redirect to home page
       } else {
@@ -37,7 +53,8 @@ export default function SignIn() {
         alert(data.message || "Login failed! Invalid credentials.");
       }
     } catch (error) {
-      alert("Login failed!");
+      console.error("Login error:", error);
+      alert("Login failed! Please try again.");
     } finally {
       setLoading(false);
     }
