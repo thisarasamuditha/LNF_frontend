@@ -1,9 +1,22 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, Filter, MapPin, Calendar, ArrowRight, Clock } from "lucide-react";
+import {
+  Search,
+  Filter,
+  MapPin,
+  Calendar,
+  ArrowRight,
+  Clock,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import axios from "axios";
 
@@ -12,7 +25,7 @@ export default function SearchPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || "");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedType, setSelectedType] = useState("");
 
@@ -21,7 +34,9 @@ export default function SearchPage() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8088/api/items");
+        const response = await axios.get(
+          "https://lostfound-production-ef57.up.railway.app/api/items",
+        );
         setItems(response.data);
         setError("");
       } catch (err) {
@@ -49,12 +64,14 @@ export default function SearchPage() {
 
   // Filter items based on search criteria
   const filteredItems = items.filter((item) => {
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.location.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || item.category === selectedCategory;
+    const matchesSearch =
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      !selectedCategory || item.category === selectedCategory;
     const matchesType = !selectedType || item.type === selectedType;
-    
+
     return matchesSearch && matchesCategory && matchesType;
   });
 
@@ -98,15 +115,15 @@ export default function SearchPage() {
                 {/* Search Bar */}
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                                  <Input
-                  type="text"
-                  placeholder="Search for items by title, description, or location..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  className="pl-12 py-4 text-lg rounded-xl"
-                />
+                  <Input
+                    type="text"
+                    placeholder="Search for items by title, description, or location..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    className="pl-12 py-4 text-lg rounded-xl"
+                  />
                 </div>
-                
+
                 {/* Filters */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -161,8 +178,8 @@ export default function SearchPage() {
           ) : error ? (
             <div className="text-center py-12">
               <p className="text-red-600 mb-4">{error}</p>
-              <Button 
-                onClick={() => window.location.reload()} 
+              <Button
+                onClick={() => window.location.reload()}
                 variant="outline"
                 className="rounded-xl"
               >
@@ -172,17 +189,17 @@ export default function SearchPage() {
           ) : filteredItems.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 mb-4">
-                {searchQuery || selectedCategory || selectedType 
-                  ? "No items match your search criteria." 
+                {searchQuery || selectedCategory || selectedType
+                  ? "No items match your search criteria."
                   : "No items found."}
               </p>
               {(searchQuery || selectedCategory || selectedType) && (
-                <Button 
+                <Button
                   onClick={() => {
                     setSearchQuery("");
                     setSelectedCategory("");
                     setSelectedType("");
-                  }} 
+                  }}
                   variant="outline"
                   className="rounded-xl"
                 >

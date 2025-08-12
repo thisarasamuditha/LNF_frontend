@@ -16,16 +16,19 @@ export default function SignIn() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8088/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://lostfound-production-ef57.up.railway.app/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
         },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      });
+      );
 
       const data = await response.json();
       if (response.ok && data.message === "Login successful!") {
@@ -33,18 +36,17 @@ export default function SignIn() {
         const userData = {
           id: data.user?.id || data.id,
           username: data.user?.username || data.username || username,
-          email: data.user?.email || data.email
+          email: data.user?.email || data.email,
         };
 
         // Save user data to localStorage
         localStorage.setItem("user", JSON.stringify(userData));
 
-        console.log("User id:", userData.id); 
-        console.log("User name:", userData.username);  // This will log the user ID (19 in this case)
-        console.log("User email:", userData.email);         
+        console.log("User id:", userData.id);
+        console.log("User name:", userData.username); // This will log the user ID (19 in this case)
+        console.log("User email:", userData.email);
         // Set authentication status
         setIsAuthenticated(true);
-
 
         alert(data.message || "Login successful!");
         navigate("/"); // Redirect to home page

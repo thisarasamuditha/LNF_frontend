@@ -45,7 +45,9 @@ export default function Index() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8088/api/items");
+        const response = await axios.get(
+          "https://lostfound-production-ef57.up.railway.app/api/items",
+        );
         setItems(response.data);
         setError("");
       } catch (err) {
@@ -128,20 +130,20 @@ export default function Index() {
 
   // Calculate stats from items data
   const stats = [
-    { 
-      number: items.length.toString(), 
-      label: "Total Items", 
-      color: "text-blue-600" 
+    {
+      number: items.length.toString(),
+      label: "Total Items",
+      color: "text-blue-600",
     },
-    { 
-      number: items.filter(item => item.type === "FOUND").length.toString(), 
-      label: "Found Items", 
-      color: "text-green-600" 
+    {
+      number: items.filter((item) => item.type === "FOUND").length.toString(),
+      label: "Found Items",
+      color: "text-green-600",
     },
-    { 
-      number: items.filter(item => item.type === "LOST").length.toString(), 
-      label: "Lost Items", 
-      color: "text-red-600" 
+    {
+      number: items.filter((item) => item.type === "LOST").length.toString(),
+      label: "Lost Items",
+      color: "text-red-600",
     },
   ];
 
@@ -312,8 +314,8 @@ export default function Index() {
           ) : error ? (
             <div className="text-center py-12">
               <p className="text-red-600 mb-4">{error}</p>
-              <Button 
-                onClick={() => window.location.reload()} 
+              <Button
+                onClick={() => window.location.reload()}
                 variant="outline"
                 className="rounded-xl"
               >

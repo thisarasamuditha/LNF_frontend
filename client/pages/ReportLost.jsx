@@ -95,7 +95,11 @@ export default function ReportLostPage() {
       let config = { headers: { "Content-Type": "application/json" } };
 
       try {
-        await axios.post("http://localhost:8088/api/items", data, config);
+        await axios.post(
+          "https://lostfound-production-ef57.up.railway.app/api/items",
+          data,
+          config,
+        );
         setSuccess(true); // Show success message
       } catch (err) {
         throw err.response?.data?.message

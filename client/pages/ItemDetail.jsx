@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Calendar, 
-  User, 
-  Phone, 
-  Mail, 
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  User,
+  Phone,
+  Mail,
   Tag,
   Clock,
-  MessageCircle
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,7 +26,9 @@ export default function ItemDetail() {
     const fetchItem = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8088/api/items/${id}`);
+        const response = await axios.get(
+          `https://lostfound-production-ef57.up.railway.app/api/items/${id}`,
+        );
         setItem(response.data);
         setError("");
       } catch (err) {
@@ -62,8 +64,8 @@ export default function ItemDetail() {
         <div className="container mx-auto px-4 py-12">
           <div className="text-center">
             <p className="text-red-600 mb-4">{error}</p>
-            <Button 
-              onClick={() => window.location.reload()} 
+            <Button
+              onClick={() => window.location.reload()}
               variant="outline"
               className="rounded-xl"
             >
@@ -127,9 +129,13 @@ export default function ItemDetail() {
           {/* Breadcrumb */}
           <div className="mb-6">
             <nav className="flex items-center space-x-2 text-sm text-gray-600">
-              <Link to="/" className="hover:text-blue-600">Home</Link>
+              <Link to="/" className="hover:text-blue-600">
+                Home
+              </Link>
               <span>/</span>
-              <Link to="/search" className="hover:text-blue-600">All Items</Link>
+              <Link to="/search" className="hover:text-blue-600">
+                All Items
+              </Link>
               <span>/</span>
               <span className="text-gray-900">{item.title}</span>
             </nav>
@@ -203,11 +209,11 @@ export default function ItemDetail() {
                     <div>
                       <p className="font-medium text-gray-900">Date</p>
                       <p className="text-gray-600">
-                        {new Date(item.date).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
+                        {new Date(item.date).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </p>
                     </div>
@@ -226,7 +232,9 @@ export default function ItemDetail() {
                       <div className="flex items-center space-x-3">
                         <User className="w-5 h-5 text-gray-500" />
                         <div>
-                          <p className="font-medium text-gray-900">Reported by</p>
+                          <p className="font-medium text-gray-900">
+                            Reported by
+                          </p>
                           <p className="text-gray-600">{item.user.username}</p>
                         </div>
                       </div>
@@ -244,7 +252,9 @@ export default function ItemDetail() {
                   <div className="flex items-center space-x-3">
                     <Phone className="w-5 h-5 text-gray-500" />
                     <div>
-                      <p className="font-medium text-gray-900">Contact Number</p>
+                      <p className="font-medium text-gray-900">
+                        Contact Number
+                      </p>
                       <p className="text-gray-600">{item.contactInfo}</p>
                     </div>
                   </div>
@@ -253,19 +263,19 @@ export default function ItemDetail() {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
+                <Button
                   className="flex-1 bg-blue-600 hover:bg-blue-700 rounded-xl py-3 flex items-center justify-center"
                   onClick={() => {
                     // Copy contact info to clipboard
                     navigator.clipboard.writeText(item.contactInfo);
-                    alert('Contact information copied to clipboard!');
+                    alert("Contact information copied to clipboard!");
                   }}
                 >
                   <Phone className="w-4 h-4 mr-2" />
                   Copy Contact Info
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex-1 rounded-xl py-3 flex items-center justify-center"
                   onClick={() => {
                     // Share functionality
@@ -273,12 +283,12 @@ export default function ItemDetail() {
                       navigator.share({
                         title: `${item.title} - ${item.type}`,
                         text: `Check out this ${item.type.toLowerCase()} item: ${item.title}`,
-                        url: window.location.href
+                        url: window.location.href,
                       });
                     } else {
                       // Fallback: copy URL to clipboard
                       navigator.clipboard.writeText(window.location.href);
-                      alert('Link copied to clipboard!');
+                      alert("Link copied to clipboard!");
                     }
                   }}
                 >
@@ -288,10 +298,8 @@ export default function ItemDetail() {
               </div>
             </div>
           </div>
-
-          
         </div>
       </div>
     </div>
   );
-} 
+}
