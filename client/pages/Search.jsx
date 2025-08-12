@@ -30,6 +30,7 @@ export default function SearchPage() {
   const [selectedType, setSelectedType] = useState("");
 
   // Fetch all items from the API
+
   useEffect(() => {
     const fetchItems = async () => {
       try {
