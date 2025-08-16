@@ -1,5 +1,5 @@
 import "./global.css";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,10 +24,40 @@ export function useAuth() {
 const queryClient = new QueryClient();
 
 function AuthProvider({ children }) {
-  // For demo: use local state. Replace with real auth logic as needed.
+  // Initialize from localStorage
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Check authentication status on app load
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      try {
+        JSON.parse(user); // Validate JSON
+        setIsAuthenticated(true);
+      } catch (error) {
+        localStorage.removeItem("user"); // Remove invalid data
+        setIsAuthenticated(false);
+      }
+    }
+    setLoading(false);
+  }, []);
+
   const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  const logout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("user");
+  };
+
+  // Show loading while checking auth status
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, login, logout, setIsAuthenticated }}
