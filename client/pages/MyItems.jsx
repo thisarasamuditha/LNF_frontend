@@ -5,7 +5,7 @@ import { useAuth } from "../App";
 import axios from "axios";
 
 // Import Lucide React icons for UI elements
-import { ArrowLeft, MapPin, Calendar, Tag } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Tag, Trash2 } from "lucide-react";
 
 // Import UI components from shadcn/ui
 import { Button } from "@/components/ui/button";
@@ -74,6 +74,39 @@ export default function MyItems() {
       setLoading(false);
     }
   }, [isAuthenticated]); // Dependency array: re-run when authentication status changes
+
+  // Handle deleting an item
+  const handleDeleteItem = async (itemId) => {
+    try {
+      // Confirm deletion with user
+      if (!window.confirm("Are you sure you want to delete this item?")) {
+        return;
+      }
+
+      // Call DELETE API endpoint
+      await axios.delete(
+        `https://lostfound-production-ef57.up.railway.app/api/items/${itemId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      // Update local state by removing the deleted item
+      setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+
+      console.log(`Item ${itemId} deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      // Show error message to user
+      if (error.response?.status === 403) {
+        alert("You can only delete your own items.");
+      } else {
+        alert("Failed to delete item. Please try again.");
+      }
+    }
+  };
 
   // Filter items based on selected type (ALL, LOST, FOUND)
   const filteredItems = items.filter((item) => {
@@ -246,12 +279,12 @@ export default function MyItems() {
                   {/* Item Image Section */}
                   <div className="relative">
                     <img
-                      src={item.imageUrl || "/placeholder.svg"}
+                      src={item.imageUrl || "/LNF_image.jpg"}
                       alt={item.title}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-80 object-cover"
                       onError={(e) => {
                         // Fallback to placeholder if image fails to load
-                        e.target.src = "/placeholder.svg";
+                        e.target.src = "/LNF_image.jpg";
                       }}
                     />
 
@@ -286,9 +319,22 @@ export default function MyItems() {
 
                   {/* Item Category Badge */}
                   <CardContent className="pt-0">
-                    <Badge variant="outline" className="text-xs">
-                      {item.category}
-                    </Badge>
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="text-xs">
+                        {item.category}
+                      </Badge>
+
+                      {/* Delete Button */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteItem(item.id)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
