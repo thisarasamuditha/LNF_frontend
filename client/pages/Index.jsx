@@ -70,7 +70,7 @@ export default function Index() {
       location: "Central Library",
       time: "2 hours ago",
       type: "lost",
-      image: "/placeholder.svg",
+      image: "/LNF_image.jpg",
       category: "Electronics",
     },
     {
@@ -79,7 +79,7 @@ export default function Index() {
       location: "Student Union",
       time: "4 hours ago",
       type: "found",
-      image: "/placeholder.svg",
+      image: "/",
       category: "Accessories",
     },
     {
@@ -88,7 +88,7 @@ export default function Index() {
       location: "Engineering Building",
       time: "6 hours ago",
       type: "lost",
-      image: "/placeholder.svg",
+      image: "/LNF_image.jpg",
       category: "Keys",
     },
     {
@@ -97,7 +97,7 @@ export default function Index() {
       location: "Campus Cafeteria",
       time: "1 day ago",
       type: "found",
-      image: "/placeholder.svg",
+      image: "/LNF_image.jpg",
       category: "Documents",
     },
   ];
@@ -333,11 +333,11 @@ export default function Index() {
                   <Card className="hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden hover:scale-[1.02] group cursor-pointer">
                     <div className="relative">
                       <img
-                        src={item.imageUrl || "/placeholder.svg"}
+                        src={item.imageUrl || "/LNF_image.jpg"}
                         alt={item.title}
-                        className="w-full h-48 object-cover group-hover:brightness-105 transition-all"
+                        className="w-full h-53 object-cover group-hover:brightness-105 transition-all"
                         onError={(e) => {
-                          e.target.src = "/placeholder.svg";
+                          e.target.src = "/LNF_image.jpg";
                         }}
                       />
                       <Badge
