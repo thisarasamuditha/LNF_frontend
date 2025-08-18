@@ -215,11 +215,11 @@ export default function SearchPage() {
                   <Card className="hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden hover:scale-[1.02] group cursor-pointer">
                     <div className="relative">
                       <img
-                        src={item.imageUrl || "/placeholder.svg"}
+                        src={item.imageUrl || "/LNF_image.jpg"}
                         alt={item.title}
-                        className="w-full h-48 object-cover group-hover:brightness-105 transition-all"
+                        className="w-full h-53 object-cover group-hover:brightness-105 transition-all"
                         onError={(e) => {
-                          e.target.src = "/placeholder.svg";
+                          e.target.src = "/LNF_image.jpg";
                         }}
                       />
                       <Badge
