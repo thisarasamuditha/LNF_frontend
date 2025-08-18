@@ -147,11 +147,11 @@ export default function ItemDetail() {
               <Card className="rounded-2xl overflow-hidden">
                 <div className="relative">
                   <img
-                    src={item.imageUrl || "/placeholder.svg"}
+                    src={item.imageUrl || "/LNF_image.jpg"}
                     alt={item.title}
                     className="w-full h-96 object-cover"
                     onError={(e) => {
-                      e.target.src = "/placeholder.svg";
+                      e.target.src = "/LNF_image.jpg";
                     }}
                   />
                   <Badge
