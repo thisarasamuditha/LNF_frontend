@@ -18,7 +18,7 @@ export default function ReportFoundPage() {
     date: "", // Date found
     type: "FOUND", // Type: LOST or FOUND
     contactInfo: "", // Contact info
-    imageUrl: "", // Image URL
+    imageFile: null, // Image file
   });
   // State for submit button loading
   const [submitting, setSubmitting] = useState(false);
@@ -30,17 +30,17 @@ export default function ReportFoundPage() {
   // Handle input changes for all fields
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: files ? files[0] : value,
-    }));
+    if (name === "imageFile") {
+      setForm((prev) => ({ ...prev, imageFile: files[0] }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    // Simple validation: all required fields must be filled
     if (
       !form.title ||
       !form.description ||
@@ -56,7 +56,6 @@ export default function ReportFoundPage() {
     setSubmitting(true);
 
     try {
-      // Get user info from localStorage
       const userStr = localStorage.getItem("user");
       let user = null;
       try {
@@ -65,19 +64,19 @@ export default function ReportFoundPage() {
         user = null;
       }
 
-      // Compose request body
-      let data = {
+      // Prepare FormData for multipart request
+      const formData = new FormData();
+      const itemRequest = {
         title: form.title,
         description: form.description,
         category: form.category,
         location: form.location,
         date: form.date,
         type: form.type,
-        imageUrl: form.imageUrl || "https://example.com/images/wallet.jpg", // Default image URL
         contactInfo: form.contactInfo,
         user: user
           ? {
-              id: user.id || 19, // Include user ID
+              id: user.id || 19,
               username: user.username,
               email: user.email || "sam@example.com",
               contactInfo: form.contactInfo,
@@ -89,16 +88,23 @@ export default function ReportFoundPage() {
               contactInfo: form.contactInfo,
             },
       };
+      formData.append(
+        "request",
+        new Blob([JSON.stringify(itemRequest)], { type: "application/json" }),
+      );
+      if (form.imageFile) {
+        formData.append("imageFile", form.imageFile);
+      }
 
-      let config = { headers: { "Content-Type": "application/json" } };
+      let config = { headers: { "Content-Type": "multipart/form-data" } };
 
       try {
         await axios.post(
           "https://lostfound-production-ef57.up.railway.app/api/items",
-          data,
+          formData,
           config,
         );
-        setSuccess(true); // Show success message
+        setSuccess(true);
       } catch (err) {
         throw err.response?.data?.message
           ? new Error(err.response.data.message)
@@ -268,15 +274,15 @@ export default function ReportFoundPage() {
                   />
                 </div>
 
-                {/* Image URL field (optional) */}
+                {/* Image Upload field (optional) */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Image URL (Optional)
+                    Upload Image (Optional)
                   </label>
                   <Input
-                    name="imageUrl"
-                    placeholder="https://example.com/images/item.jpg"
-                    value={form.imageUrl}
+                    name="imageFile"
+                    type="file"
+                    accept="image/*"
                     onChange={handleChange}
                     className="rounded-xl"
                   />
