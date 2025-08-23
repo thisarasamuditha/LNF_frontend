@@ -15,6 +15,9 @@ export default function SignIn() {
     e.preventDefault();
     setLoading(true);
 
+    const API_BASE_URL =
+      import.meta.env.VITE_API_URL || "http://localhost:8088";
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",

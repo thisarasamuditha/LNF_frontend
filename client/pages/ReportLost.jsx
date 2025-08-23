@@ -99,6 +99,8 @@ export default function ReportLostPage() {
 
       let config = { headers: { "Content-Type": "multipart/form-data" } };
 
+      const API_BASE_URL =
+        import.meta.env.VITE_API_URL || "http://localhost:8088";
       try {
         await axios.post(`${API_BASE_URL}/api/items`, formData, config);
         setSuccess(true);

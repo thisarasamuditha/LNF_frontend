@@ -45,6 +45,18 @@ export default function Index() {
     const fetchItems = async () => {
       try {
         setLoading(true);
+
+        // 🔍 DEBUG: Check environment variables
+        console.log("🔧 DEBUG INFO:");
+        console.log("Environment MODE:", import.meta.env.MODE);
+        console.log("VITE_API_URL value:", import.meta.env.VITE_API_URL);
+        console.log("VITE_API_URL type:", typeof import.meta.env.VITE_API_URL);
+        console.log("All env variables:", import.meta.env);
+
+        const API_BASE_URL =
+          import.meta.env.VITE_API_URL || "http://localhost:8088";
+        console.log("Final API_BASE_URL:", API_BASE_URL);
+
         const response = await axios.get(`${API_BASE_URL}/api/items`);
         setItems(response.data);
         setError("");

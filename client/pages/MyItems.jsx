@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../App";
 import axios from "axios";
-import { API_BASE_URL } from "@/lib/config";
 
 // Import Lucide React icons for UI elements
 import { ArrowLeft, MapPin, Calendar, Tag, Trash2 } from "lucide-react";
@@ -53,6 +52,8 @@ export default function MyItems() {
         }
 
         // Fetch user's items from the backend API
+        const API_BASE_URL =
+          import.meta.env.VITE_API_URL || "http://localhost:8088";
         const response = await axios.get(
           `${API_BASE_URL}/api/items/user/${user.id}`,
         );
@@ -85,6 +86,8 @@ export default function MyItems() {
       }
 
       // Call DELETE API endpoint
+      const API_BASE_URL =
+        import.meta.env.VITE_API_URL || "http://localhost:8088";
       await axios.delete(`${API_BASE_URL}/api/items/${itemId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
