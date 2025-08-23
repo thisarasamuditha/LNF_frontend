@@ -35,9 +35,7 @@ export default function SearchPage() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "https://lostfound-production-ef57.up.railway.app/api/items",
-        );
+        const response = await axios.get(`${API_BASE_URL}/api/items`);
         setItems(response.data);
         setError("");
       } catch (err) {

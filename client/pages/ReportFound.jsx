@@ -99,11 +99,7 @@ export default function ReportFoundPage() {
       let config = { headers: { "Content-Type": "multipart/form-data" } };
 
       try {
-        await axios.post(
-          "https://lostfound-production-ef57.up.railway.app/api/items",
-          formData,
-          config,
-        );
+        await axios.post(`${API_BASE_URL}/api/items`, formData, config);
         setSuccess(true);
       } catch (err) {
         throw err.response?.data?.message

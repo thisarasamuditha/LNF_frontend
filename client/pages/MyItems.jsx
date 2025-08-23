@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../App";
 import axios from "axios";
+import { API_BASE_URL } from "@/lib/config";
 
 // Import Lucide React icons for UI elements
 import { ArrowLeft, MapPin, Calendar, Tag, Trash2 } from "lucide-react";
@@ -53,7 +54,7 @@ export default function MyItems() {
 
         // Fetch user's items from the backend API
         const response = await axios.get(
-          `https://lostfound-production-ef57.up.railway.app/api/items/user/${user.id}`,
+          `${API_BASE_URL}/api/items/user/${user.id}`,
         );
         setItems(response.data);
         setError("");
@@ -84,14 +85,11 @@ export default function MyItems() {
       }
 
       // Call DELETE API endpoint
-      await axios.delete(
-        `https://lostfound-production-ef57.up.railway.app/api/items/${itemId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      await axios.delete(`${API_BASE_URL}/api/items/${itemId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      );
+      });
 
       // Update local state by removing the deleted item
       setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));

@@ -26,9 +26,7 @@ export default function ItemDetail() {
     const fetchItem = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `https://lostfound-production-ef57.up.railway.app/api/items/${id}`,
-        );
+        const response = await axios.get(`${API_BASE_URL}/api/items/${id}`);
         setItem(response.data);
         setError("");
       } catch (err) {

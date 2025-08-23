@@ -16,19 +16,16 @@ export default function SignIn() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "https://lostfound-production-ef57.up.railway.app/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            password,
-          }),
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
 
       const data = await response.json();
       if (response.ok && data.message === "Login successful!") {
