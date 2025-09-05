@@ -271,7 +271,6 @@ export default function ItemDetail() {
                     alert("Contact information copied to clipboard!");
                   }}
                 >
-                  <Phone className="w-4 h-4 mr-2" />
                   Copy Contact Info
                 </Button>
                 <Button
@@ -292,7 +291,6 @@ export default function ItemDetail() {
                     }
                   }}
                 >
-                  <MessageCircle className="w-5 h-5 mr-2" />
                   Share Item
                 </Button>
               </div>
