@@ -5,10 +5,21 @@ import { useAuth } from "../App";
 import axios from "axios";
 
 // Import Lucide React icons for UI elements
-import { ArrowLeft, MapPin, Calendar, Tag, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  Tag,
+  Trash2,
+  Edit3,
+  X,
+  Save,
+} from "lucide-react";
 
 // Import UI components from shadcn/ui
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -27,6 +38,19 @@ export default function MyItems() {
   const [loading, setLoading] = useState(true); // Loading state for API calls
   const [error, setError] = useState(""); // Error message state
   const [filterType, setFilterType] = useState("ALL"); // Filter state: ALL, LOST, FOUND
+
+  // Edit modal state
+  const [editingItem, setEditingItem] = useState(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    category: "",
+    description: "",
+    location: "",
+    date: "",
+    type: "",
+    contactInfo: "",
+  });
+  const [editLoading, setEditLoading] = useState(false);
 
   // Effect hook to fetch user items when component mounts or authentication changes
   useEffect(() => {
@@ -76,6 +100,116 @@ export default function MyItems() {
       setLoading(false);
     }
   }, [isAuthenticated]); // Dependency array: re-run when authentication status changes
+
+  // Handle opening edit modal
+  const handleEditItem = (item) => {
+    setEditingItem(item);
+    setEditForm({
+      title: item.title,
+      category: item.category,
+      description: item.description,
+      location: item.location,
+      date: item.date,
+      type: item.type,
+      contactInfo: item.contactInfo,
+    });
+  };
+
+  // Handle closing edit modal
+  const handleCancelEdit = () => {
+    setEditingItem(null);
+    setEditForm({
+      title: "",
+      category: "",
+      description: "",
+      location: "",
+      date: "",
+      type: "",
+      contactInfo: "",
+    });
+  };
+
+  // Handle form input changes
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle PUT request to update item
+  const handleUpdateItem = async (e) => {
+    e.preventDefault();
+
+    try {
+      setEditLoading(true);
+
+      // Get user data for the request
+      const userStr = localStorage.getItem("user");
+      const user = userStr ? JSON.parse(userStr) : null;
+
+      if (!user) {
+        alert("User not found. Please sign in again.");
+        return;
+      }
+
+      // Prepare request body matching your backend structure
+      const requestBody = {
+        title: editForm.title,
+        category: editForm.category,
+        description: editForm.description,
+        location: editForm.location,
+        date: editForm.date,
+        type: editForm.type,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          contactInfo: editForm.contactInfo,
+        },
+      };
+
+      const API_BASE_URL =
+        import.meta.env.VITE_API_URL || "http://localhost:8088";
+
+      // Make PUT request to update item
+      const response = await axios.put(
+        `${API_BASE_URL}/api/items/${editingItem.id}`,
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      // Update local state with the updated item
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === editingItem.id ? response.data : item,
+        ),
+      );
+
+      // Close edit modal
+      handleCancelEdit();
+
+      alert("Item updated successfully!");
+    } catch (error) {
+      console.error("Error updating item:", error);
+
+      if (error.response?.status === 403) {
+        alert("You can only edit your own items.");
+      } else if (error.response?.status === 404) {
+        alert("Item not found.");
+      } else {
+        alert("Failed to update item. Please try again.");
+      }
+    } finally {
+      setEditLoading(false);
+    }
+  };
 
   // Handle deleting an item
   const handleDeleteItem = async (itemId) => {
@@ -166,6 +300,172 @@ export default function MyItems() {
           </div>
         </div>
       </header>
+
+      {/* Edit Modal */}
+      {editingItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">Edit Item</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelEdit}
+                  className="rounded-xl"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+
+              <form onSubmit={handleUpdateItem} className="space-y-6">
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Title *
+                  </label>
+                  <Input
+                    name="title"
+                    value={editForm.title}
+                    onChange={handleEditFormChange}
+                    required
+                    className="rounded-xl"
+                    placeholder="Enter item title"
+                  />
+                </div>
+
+                {/* Category */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category *
+                  </label>
+                  <select
+                    name="category"
+                    value={editForm.category}
+                    onChange={handleEditFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="ELECTRONICS">Electronics</option>
+                    <option value="ACCESSORIES">Accessories</option>
+                    <option value="CLOTHING">Clothing</option>
+                    <option value="BOOKS">Books</option>
+                    <option value="KEYS">Keys</option>
+                    <option value="DOCUMENTS">Documents</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+
+                {/* Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Type *
+                  </label>
+                  <select
+                    name="type"
+                    value={editForm.type}
+                    onChange={handleEditFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="LOST">Lost</option>
+                    <option value="FOUND">Found</option>
+                  </select>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description *
+                  </label>
+                  <Textarea
+                    name="description"
+                    value={editForm.description}
+                    onChange={handleEditFormChange}
+                    required
+                    rows={3}
+                    className="rounded-xl"
+                    placeholder="Describe the item in detail"
+                  />
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Location *
+                  </label>
+                  <Input
+                    name="location"
+                    value={editForm.location}
+                    onChange={handleEditFormChange}
+                    required
+                    className="rounded-xl"
+                    placeholder="Where was it lost/found?"
+                  />
+                </div>
+
+                {/* Date */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date *
+                  </label>
+                  <Input
+                    name="date"
+                    type="date"
+                    value={editForm.date}
+                    onChange={handleEditFormChange}
+                    required
+                    className="rounded-xl"
+                  />
+                </div>
+
+                {/* Contact Info */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Contact Info *
+                  </label>
+                  <Input
+                    name="contactInfo"
+                    value={editForm.contactInfo}
+                    onChange={handleEditFormChange}
+                    required
+                    className="rounded-xl"
+                    placeholder="Phone number or email"
+                  />
+                </div>
+
+                {/* Form Actions */}
+                <div className="flex gap-4 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCancelEdit}
+                    className="flex-1 rounded-xl"
+                    disabled={editLoading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="flex-1 rounded-xl bg-blue-600 hover:bg-blue-700"
+                    disabled={editLoading}
+                  >
+                    {editLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Updating...
+                      </>
+                    ) : (
+                      <>Update Item</>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Container */}
       <div className="container mx-auto px-4 py-12">
@@ -318,21 +618,31 @@ export default function MyItems() {
                     </CardDescription>
                   </CardHeader>
 
-                  {/* Item Category Badge */}
+                  {/* Item Category Badge and Action Buttons */}
                   <CardContent className="pt-0">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
                       <Badge variant="outline" className="text-xs">
                         {item.category}
                       </Badge>
+                    </div>
 
-                      {/* Delete Button */}
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 h-10">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditItem(item)}
+                        className="flex-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      >
+                        Edit
+                      </Button>
+
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteItem(item.id)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
-                        <Trash2 className="w-4 h-4 mr-1" />
                         Delete
                       </Button>
                     </div>
