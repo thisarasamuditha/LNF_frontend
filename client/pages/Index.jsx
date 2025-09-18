@@ -46,16 +46,8 @@ export default function Index() {
       try {
         setLoading(true);
 
-        // 🔍 DEBUG: Check environment variables
-        console.log("🔧 DEBUG INFO:");
-        console.log("Environment MODE:", import.meta.env.MODE);
-        console.log("VITE_API_URL value:", import.meta.env.VITE_API_URL);
-        console.log("VITE_API_URL type:", typeof import.meta.env.VITE_API_URL);
-        console.log("All env variables:", import.meta.env);
-
-        const API_BASE_URL =
-          import.meta.env.VITE_API_URL || "http://localhost:8088";
-        console.log("Final API_BASE_URL:", API_BASE_URL);
+        const API_BASE_URL = import.meta.env.VITE_API_URL;
+        // console.log("Final API_BASE_URL:", API_BASE_URL);
 
         const response = await axios.get(`${API_BASE_URL}/api/items`);
         setItems(response.data);
@@ -72,45 +64,6 @@ export default function Index() {
 
     fetchItems();
   }, []);
-
-  const recentItems = [
-    {
-      id: 1,
-      title: "Black iPhone 14",
-      location: "Central Library",
-      time: "2 hours ago",
-      type: "lost",
-      image: "/placeholder.svg",
-      category: "Electronics",
-    },
-    {
-      id: 2,
-      title: "Blue Water Bottle",
-      location: "Student Union",
-      time: "4 hours ago",
-      type: "found",
-      image: "/placeholder.svg",
-      category: "Accessories",
-    },
-    {
-      id: 3,
-      title: "Silver Keys with Red Keychain",
-      location: "Engineering Building",
-      time: "6 hours ago",
-      type: "lost",
-      image: "/placeholder.svg",
-      category: "Keys",
-    },
-    {
-      id: 4,
-      title: "Brown Leather Wallet",
-      location: "Campus Cafeteria",
-      time: "1 day ago",
-      type: "found",
-      image: "/placeholder.svg",
-      category: "Documents",
-    },
-  ];
 
   const features = [
     {
@@ -161,6 +114,7 @@ export default function Index() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
+        {/*the background transparency is comming from "bg-white/80". less value for opacity will result in a more transparent background */}
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
