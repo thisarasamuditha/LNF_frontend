@@ -381,7 +381,7 @@ export default function MyItems() {
       {/* Edit Modal */}
       {editingItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-y-auto mx-2 sm:mx-0">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-gray-900">Edit Item</h3>
@@ -549,7 +549,9 @@ export default function MyItems() {
         <div className="max-w-7xl mx-auto">
           {/* Page Header Section */}
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">My Items</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4 text-2xl sm:text-4xl">
+              My Items
+            </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               View all the items you've reported as lost or found.
             </p>
@@ -659,7 +661,7 @@ export default function MyItems() {
                     <img
                       src={item.imageUrl || "/LNF_image.jpg"}
                       alt={item.title}
-                      className="w-full h-80 object-cover"
+                      className="w-full h-48 sm:h-64 object-cover"
                       onError={(e) => {
                         // Fallback to placeholder if image fails to load
                         e.target.src = "/LNF_image.jpg";
@@ -704,7 +706,7 @@ export default function MyItems() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-3 gap-2 h-10">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -715,14 +717,14 @@ export default function MyItems() {
                           )
                         }
                         disabled={stateUpdatingId === item.id}
-                        className={
+                        className={`flex-1 min-w-0 text-xs sm:text-sm ${
                           item.type === "LOST"
                             ? "text-green-600 hover:text-green-700 hover:bg-green-50"
                             : "text-red-600 hover:text-red-700 hover:bg-red-50"
-                        }
+                        }`}
                       >
                         {stateUpdatingId === item.id
-                          ? "Saving..."
+                          ? "..."
                           : item.type === "LOST"
                             ? "Mark Found"
                             : "Mark Lost"}
@@ -732,7 +734,7 @@ export default function MyItems() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditItem(item)}
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        className="flex-1 min-w-0 text-xs sm:text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                       >
                         Edit
                       </Button>
@@ -741,7 +743,7 @@ export default function MyItems() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteItem(item.id)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="flex-1 min-w-0 text-xs sm:text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         Delete
                       </Button>

@@ -12,6 +12,8 @@ import {
   ArrowRight,
   Camera,
   Tag,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +32,7 @@ export default function Index() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   // Handle search submission
@@ -156,7 +159,7 @@ export default function Index() {
                 My Items
               </Link>
             </nav>
-            <div className="flex items-center space-x-3">
+            <div className="hidden md:flex items-center space-x-3">
               {isAuthenticated ? (
                 <Button size="sm" onClick={logout}>
                   Logout
@@ -172,8 +175,78 @@ export default function Index() {
                 </>
               )}
             </div>
+            {/* Mobile hamburger */}
+            <button
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6 text-gray-700" />
+              ) : (
+                <Menu className="w-6 h-6 text-gray-700" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile nav dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-blue-100 bg-white/95 backdrop-blur-sm">
+            <nav className="flex flex-col px-4 py-3 space-y-1">
+              {[
+                { to: "/search", label: "Search Items" },
+                { to: "/report-lost", label: "Report Lost" },
+                { to: "/report-found", label: "Report Found" },
+                { to: "/my-items", label: "My Items" },
+              ].map(({ to, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-2 px-3 rounded-lg text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
+              <div className="pt-2 border-t border-gray-100 flex gap-2">
+                {isAuthenticated ? (
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Logout
+                  </Button>
+                ) : (
+                  <>
+                    <Link
+                      to="/signin"
+                      className="flex-1"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Button size="sm" className="w-full">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="flex-1"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Button size="sm" variant="outline" className="w-full">
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
@@ -244,7 +317,7 @@ export default function Index() {
       {/* Stats Section */}
       <section className="py-12 bg-white/50">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-4xl mx-auto">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className={`text-4xl font-bold ${stat.color} mb-2`}>
@@ -291,7 +364,7 @@ export default function Index() {
               <p className="text-gray-600 mb-4">No items found.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto">
               {items.slice(0, 10).map((item) => (
                 <Link to={`/items/${item.id}`} key={item.id}>
                   <Card className="hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden hover:scale-[1.02] group cursor-pointer">
@@ -373,7 +446,7 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto">
             {features.map((feature, index) => (
               <Card
                 key={index}

@@ -100,8 +100,8 @@ export default function SearchPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-7xl mx-auto">
           {/* Search Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-6 md:mb-8">
+            <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 md:mb-4">
               Search All Items
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -126,7 +126,7 @@ export default function SearchPage() {
                 </div>
 
                 {/* Filters */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Category Filter
@@ -134,7 +134,7 @@ export default function SearchPage() {
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full rounded-xl border-gray-300"
+                      className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">All Categories</option>
                       <option value="ELECTRONICS">ELECTRONICS</option>
@@ -153,7 +153,7 @@ export default function SearchPage() {
                     <select
                       value={selectedType}
                       onChange={(e) => setSelectedType(e.target.value)}
-                      className="w-full rounded-xl border-gray-300"
+                      className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">All Types</option>
                       <option value="LOST">LOST</option>
@@ -209,7 +209,7 @@ export default function SearchPage() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
               {filteredItems.map((item) => (
                 <Link to={`/items/${item.id}`} key={item.id}>
                   <Card className="hover:shadow-lg transition-all duration-300 rounded-2xl overflow-hidden hover:scale-[1.02] group cursor-pointer">
@@ -217,7 +217,7 @@ export default function SearchPage() {
                       <img
                         src={item.imageUrl || "/LNF_image.jpg"}
                         alt={item.title}
-                        className="w-full h-53 object-cover group-hover:brightness-105 transition-all"
+                        className="w-full h-36 sm:h-48 object-cover group-hover:brightness-105 transition-all"
                         onError={(e) => {
                           e.target.src = "/LNF_image.jpg";
                         }}

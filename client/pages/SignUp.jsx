@@ -50,9 +50,9 @@ export default function SignUp() {
 
   return (
     // Centered container with gradient background
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50 px-4">
       {/* Card container for the form */}
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md border border-blue-100">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-md border border-blue-100">
         {/* Title */}
         <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
           Sign Up
