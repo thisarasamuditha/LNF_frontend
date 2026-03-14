@@ -51,6 +51,7 @@ export default function MyItems() {
     contactInfo: "",
   });
   const [editLoading, setEditLoading] = useState(false);
+  const [stateUpdatingId, setStateUpdatingId] = useState(null);
 
   // Effect hook to fetch user items when component mounts or authentication changes
   useEffect(() => {
@@ -111,7 +112,7 @@ export default function MyItems() {
       location: item.location,
       date: item.date,
       type: item.type,
-      contactInfo: item.contactInfo,
+      contactInfo: item.user?.contactInfo || item.contactInfo || "",
     });
   };
 
@@ -240,6 +241,82 @@ export default function MyItems() {
       } else {
         alert("Failed to delete item. Please try again.");
       }
+    }
+  };
+
+  const handleUpdateItemState = async (itemId, nextType) => {
+    try {
+      setStateUpdatingId(itemId);
+
+      const API_BASE_URL =
+        import.meta.env.VITE_API_URL || "http://localhost:8088";
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      try {
+        const response = await axios.patch(
+          `${API_BASE_URL}/api/items/${itemId}/state`,
+          { state: nextType },
+          { headers },
+        );
+
+        setItems((prevItems) =>
+          prevItems.map((item) => (item.id === itemId ? response.data : item)),
+        );
+      } catch (patchError) {
+        const status = patchError.response?.status;
+
+        if (patchError.response && status !== 404 && status !== 405) {
+          throw patchError;
+        }
+
+        const currentItem = items.find((item) => item.id === itemId);
+        if (!currentItem) {
+          throw patchError;
+        }
+
+        const userStr = localStorage.getItem("user");
+        const user = userStr ? JSON.parse(userStr) : null;
+
+        const fallbackRequestBody = {
+          title: currentItem.title,
+          category: currentItem.category,
+          description: currentItem.description,
+          location: currentItem.location,
+          date: currentItem.date,
+          type: nextType,
+          user: {
+            id: user?.id || currentItem.user?.userid,
+            username: user?.username || currentItem.user?.username,
+            email: user?.email || currentItem.user?.email,
+            contactInfo: currentItem.user?.contactInfo || "",
+          },
+        };
+
+        const response = await axios.put(
+          `${API_BASE_URL}/api/items/${itemId}`,
+          fallbackRequestBody,
+          { headers },
+        );
+
+        setItems((prevItems) =>
+          prevItems.map((item) => (item.id === itemId ? response.data : item)),
+        );
+      }
+    } catch (error) {
+      console.error("Error updating item state:", error);
+
+      if (!error.response) {
+        alert(
+          "Failed to update item state due to a network/CORS issue. Please restart backend after latest changes.",
+        );
+      } else {
+        alert("Failed to update item state. Please try again.");
+      }
+    } finally {
+      setStateUpdatingId(null);
     }
   };
 
@@ -627,12 +704,35 @@ export default function MyItems() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-2 h-10">
+                    <div className="grid grid-cols-3 gap-2 h-10">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          handleUpdateItemState(
+                            item.id,
+                            item.type === "LOST" ? "FOUND" : "LOST",
+                          )
+                        }
+                        disabled={stateUpdatingId === item.id}
+                        className={
+                          item.type === "LOST"
+                            ? "text-green-600 hover:text-green-700 hover:bg-green-50"
+                            : "text-red-600 hover:text-red-700 hover:bg-red-50"
+                        }
+                      >
+                        {stateUpdatingId === item.id
+                          ? "Saving..."
+                          : item.type === "LOST"
+                            ? "Mark Found"
+                            : "Mark Lost"}
+                      </Button>
+
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditItem(item)}
-                        className="flex-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                       >
                         Edit
                       </Button>
@@ -641,7 +741,7 @@ export default function MyItems() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteItem(item.id)}
-                        className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         Delete
                       </Button>
